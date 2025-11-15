@@ -92,10 +92,105 @@ void setup()
   tft.setTextColor(ST77XX_WHITE);
 }
 
+float cpu = 0;
+float mem = 0;
+IPAddress IP1 = IPAddress(0, 0, 0, 0);
+String if1Name = "";
+IPAddress IP2 = IPAddress(0, 0, 0, 0);
+String if2Name = "";
+
+String IPAddressToString(IPAddress ip);
+
+const uint8_t lineHeight = 17;
+uint8_t y = 0;
+
 void loop()
 {
   if (Serial.available())
-  {};
+  {
+    delay(500); // wait for data to be fully received
+    Serial.println("Receiving JSON data...");
+    JsonDocument doc;
+
+    String data = Serial.readStringUntil('\n'); // read data into variable until EOL
+    DeserializationError error = deserializeJson(doc, data);
+
+    if (error)
+    {
+      Serial.print("deserializeJson() failed: ");
+      Serial.println(error.c_str());
+      return;
+    }
+
+    if (doc.containsKey("cpu"))
+    {
+      cpu = doc["cpu"].as<float>();
+    }
+    if (doc.containsKey("mem"))
+    {
+      mem = doc["mem"].as<float>();
+    }
+    if (doc.containsKey("if1"))
+    {
+      JsonObject if1 = doc["if1"];
+      if (if1.containsKey("ip"))
+      {
+        IP1.fromString(if1["ip"].as<String>());
+      }
+      if (if1.containsKey("name"))
+      {
+        if1Name = if1["name"].as<String>();
+      }
+    }
+    if (doc.containsKey("if2"))
+    {
+      JsonObject if2 = doc["if2"];
+      if (if2.containsKey("ip"))
+      {
+        IP2.fromString(if2["ip"].as<String>());
+      }
+      if (if2.containsKey("name"))
+      {
+        if2Name = if2["name"].as<String>();
+      }
+    }
+
+    y = lineHeight;
+    tft.drawRect(0, 0, tft.width(), lineHeight, ST77XX_BLACK);
+
+    tft.drawRect(0, y, tft.width(), lineHeight, ST77XX_BLACK);
+    tft.setCursor(0, y);
+    tft.print("CPU: ");
+    tft.print(cpu);
+    tft.print("%    ");
+    y += lineHeight;
+
+    tft.drawRect(0, y, tft.width(), lineHeight, ST77XX_BLACK);
+    tft.setCursor(0, y);
+    tft.print("RAM: ");
+    tft.print(mem);
+    tft.print("%    ");
+    y += lineHeight;
+
+    tft.drawRect(0, y, tft.width(), lineHeight, ST77XX_BLACK);
+    tft.setCursor(0, y);
+    tft.print(if1Name);
+    tft.print(":");
+    tft.print(IPAddressToString(IP1));
+    tft.print("     ");
+    y += lineHeight;
+
+    tft.drawRect(0, y, tft.width(), lineHeight, ST77XX_BLACK);
+    tft.setCursor(0, y);
+    tft.print(if2Name);
+    tft.print(":");
+    tft.print(IPAddressToString(IP2));
+    tft.print("     ");
+
+    String dataOut = "";
+    serializeJson(doc, dataOut);
+    Serial.println(dataOut);
+  };
 }
 
 String IPAddressToString(IPAddress ip)
