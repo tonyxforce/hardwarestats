@@ -1,18 +1,29 @@
 #include <Arduino.h>
+#include <ArduinoJson.h>
 
-// put function declarations here:
-int myFunction(int, int);
-
-void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+void setup()
+{
+  Serial.begin(115200);
+  Serial.println("Booting...");
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-}
+void loop()
+{
+  if (Serial.available())
+  {
+/*     Serial.println("Receiving JSON data...");
+    JsonDocument doc;
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+    DeserializationError error = deserializeJson(doc, Serial);
+
+    if (error)
+    {
+      Serial.print("deserializeJson() failed: ");
+      Serial.println(error.c_str());
+      return;
+    }
+
+    deserializeJson(doc, Serial); */
+    Serial.print(Serial.read());
+  };
 }
