@@ -10,20 +10,11 @@ void setup()
 void loop()
 {
   if (Serial.available())
-  {
-/*     Serial.println("Receiving JSON data...");
-    JsonDocument doc;
+  {};
+}
 
-    DeserializationError error = deserializeJson(doc, Serial);
-
-    if (error)
-    {
-      Serial.print("deserializeJson() failed: ");
-      Serial.println(error.c_str());
-      return;
-    }
-
-    deserializeJson(doc, Serial); */
-    Serial.print(Serial.read());
-  };
+String IPAddressToString(IPAddress ip)
+{
+  String out = String(ip[0]) + "." + String(ip[1]) + "." + String(ip[2]) + "." + String(ip[3]);
+  return out;
 }
