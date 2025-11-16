@@ -52,7 +52,7 @@ const { SerialPort } = require("serialport");
                     ip: interfaces[1].address,
                 }
             };
-            sp.write(JSON.stringify(dataToSend) + "\n");
+                sp.write(JSON.stringify(dataToSend) + "\n");
             console.log(dataToSend);
 
         }, 1000)

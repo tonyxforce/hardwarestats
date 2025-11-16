@@ -7,8 +7,11 @@
   },
   "keywords": [],
   "author": "",
+  "type": "module",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^17.2.3",
+    "proxmox-api": "^1.1.1",
     "serialport": "^13.0.0",
     "system-monitoring": "^0.0.17"
   },

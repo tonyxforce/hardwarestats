@@ -94,12 +94,9 @@ void setup()
 
 float cpu = 0;
 float mem = 0;
-IPAddress IP1 = IPAddress(0, 0, 0, 0);
-String if1Name = "";
-IPAddress IP2 = IPAddress(0, 0, 0, 0);
-String if2Name = "";
 
-String IPAddressToString(IPAddress ip);
+uint8_t otherStringCount = 0;
+String otherStrings[10] = {};
 
 const uint8_t lineHeight = 17;
 uint8_t y = 0;
@@ -122,70 +119,26 @@ void loop()
       return;
     }
 
-    if (doc.containsKey("cpu"))
+    if (doc.containsKey("otherStringCount"))
     {
-      cpu = doc["cpu"].as<float>();
-    }
-    if (doc.containsKey("mem"))
-    {
-      mem = doc["mem"].as<float>();
-    }
-    if (doc.containsKey("if1"))
-    {
-      JsonObject if1 = doc["if1"];
-      if (if1.containsKey("ip"))
+      otherStringCount = doc["otherStringCount"].as<uint8_t>();
+      if (doc.is<JsonArray>("otherStrings"))
       {
-        IP1.fromString(if1["ip"].as<String>());
-      }
-      if (if1.containsKey("name"))
-      {
-        if1Name = if1["name"].as<String>();
-      }
-    }
-    if (doc.containsKey("if2"))
-    {
-      JsonObject if2 = doc["if2"];
-      if (if2.containsKey("ip"))
-      {
-        IP2.fromString(if2["ip"].as<String>());
-      }
-      if (if2.containsKey("name"))
-      {
-        if2Name = if2["name"].as<String>();
+        for (uint8t_t i = 0; i < otherStringCount; i++)
+          otherStrings[i] = doc["otherStrings"][i].as<String>();
       }
     }
 
     y = lineHeight;
     tft.drawRect(0, 0, tft.width(), lineHeight, ST77XX_BLACK);
 
-    tft.drawRect(0, y, tft.width(), lineHeight, ST77XX_BLACK);
-    tft.setCursor(0, y);
-    tft.print("CPU: ");
-    tft.print(cpu);
-    tft.print("%    ");
-    y += lineHeight;
-
-    tft.drawRect(0, y, tft.width(), lineHeight, ST77XX_BLACK);
-    tft.setCursor(0, y);
-    tft.print("RAM: ");
-    tft.print(mem);
-    tft.print("%    ");
-    y += lineHeight;
-
-    tft.drawRect(0, y, tft.width(), lineHeight, ST77XX_BLACK);
-    tft.setCursor(0, y);
-    tft.print(if1Name);
-    tft.print(":");
-    tft.print(IPAddressToString(IP1));
-    tft.print("     ");
-    y += lineHeight;
-
-    tft.drawRect(0, y, tft.width(), lineHeight, ST77XX_BLACK);
-    tft.setCursor(0, y);
-    tft.print(if2Name);
-    tft.print(":");
-    tft.print(IPAddressToString(IP2));
-    tft.print("     ");
+    for (uint8_t i = 0; i < otherStringCount; i++)
+    {
+      tft.drawRect(0, y, tft.width(), lineHeight, ST77XX_BLACK);
+      tft.setCursor(0, y);
+      tft.print(otherStrings[i]);
+      y += lineHeight;
+    }
 
     String dataOut = "";
     serializeJson(doc, dataOut);
