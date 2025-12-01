@@ -22,7 +22,8 @@ const { SerialPort } = require("serialport");
 
     function openPort() {
         sp = new SerialPort({ path: `\\\\.\\${path}`, baudRate: 115200, autoOpen: false });
-        portOpen(); //TODO
+        sp.on("open", portOpen);
+        setTimeout(()=>{}, 3000); // Small delay to allow the port to open before the script exits
         sp.open();
         sp.on("close", portClose);
     }
